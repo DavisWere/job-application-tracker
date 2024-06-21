@@ -20,13 +20,13 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'first_name', 'second_name',
                   'phone_number', 'email', 'username', 'password', 'user_type', 'resume']
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data.pop('password')
+        return data
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         user_type = self.context['request'].data.get('user_type', None)
         if user_type == 'applicant':
             self.fields['resume'] = serializers.FileField()
-
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        data.pop('password')
-        return data
