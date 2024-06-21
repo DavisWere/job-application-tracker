@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 
 # Create your models here.
 
@@ -45,7 +46,7 @@ class PaymentMethod(models.TextChoices):
 
 
 class Payment(models.Model):
-    user = models.ForeignKey('User', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     payment_method = models.CharField(
         max_length=10,
         choices=PaymentMethod.choices,

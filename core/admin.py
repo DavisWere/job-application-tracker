@@ -6,18 +6,6 @@ from django.contrib import admin
 
 
 class CustomUserAdmin(UserAdmin):
-    fieldsets = UserAdmin.fieldsets + (
-        (
-            "Other Fields",
-            {
-                "fields": (
-
-
-
-                )
-            },
-        ),
-    )
     add_fieldsets = UserAdmin.add_fieldsets + (
         (
             "Other Fields",
@@ -30,6 +18,7 @@ class CustomUserAdmin(UserAdmin):
                     'user_type',
                     'phone_number',
                     'resume',
+
 
 
 
