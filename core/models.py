@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.core.exceptions import ValidationError
 
 # Create your models here.
 
@@ -24,15 +23,16 @@ class User(AbstractUser):
         return f"{self.first_name} {self.second_name}"
 
 
-class Jobs(models.Model):
+class Job(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, null=True, blank=True)
     job_title = models.CharField(max_length=100, null=True, blank=True)
     job_description = models.TextField(max_length=500, null=True, blank=True)
-    date_posted = models.DateField(auto_now=True, null=True)
+    date_posted = models.DateField(
+        auto_now_add=True,  editable=False, null=True)
 
     def __str__(self):
-        return f"{self.job_title}"
+        return f"{self.Job_title}"
 
 
 class Currency(models.TextChoices):
@@ -67,10 +67,10 @@ class Payment(models.Model):
 
 class Application(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    job = models.ForeignKey(Jobs, on_delete=models.CASCADE, null=True)
+    Job = models.ForeignKey(Job, on_delete=models.CASCADE, null=True)
     payment = models.ForeignKey(Payment, on_delete=models.PROTECT, null=True)
     applied = models.BooleanField(default=False, editable=False)
-    application_date = models.DateField(auto_created=True)
+    application_date = models.DateField(auto_now_add=True)
 
 
 class Notification(models.Model):

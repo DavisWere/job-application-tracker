@@ -31,10 +31,33 @@ class UserSerializer(serializers.ModelSerializer):
         if user_type == 'applicant':
             self.fields['resume'] = serializers.FileField()
 
-    def validate(self, data):
-        user = data.get('user_type')
-        if user.user_type != 'applicant':
-            raise serializers.ValidationError(
-                'only applicants can apply for job')
 
-        return data
+class JobSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(
+        write_only=True, queryset=User.objects.all(), required=False)
+
+    class Meta:
+        model = Job
+        fields = ['id', 'user', 'job_title', 'job_description', 'date_posted']
+
+    def validate(self, data):
+        user = data.get('user')
+        if user.user_type != 'employer':
+            raise serializers.ValidationError(
+                'Only employers can upload job/s')
+        return super().validate(data)
+
+    def create(self, validated_data):
+        user = validated_data.pop('user', None)
+        job = Job.objects.create(**validated_data)
+        job.save()
+        return job
+
+    def update(self, instance, validated_data):
+        user = validated_data.pop('user', None)
+        job = super().update(instance, validated_data)
+        job.save()
+        if user is not None:
+            instance.user = user
+        instance.save()
+        return instance

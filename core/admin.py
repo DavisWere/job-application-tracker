@@ -29,6 +29,6 @@ class CustomUserAdmin(UserAdmin):
 
 
 admin.site.register(User, CustomUserAdmin)
-admin.site.register(Jobs)
+admin.site.register(Job)
 admin.site.register(Payment)
 admin.site.register(Notification)

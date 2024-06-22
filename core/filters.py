@@ -1,5 +1,5 @@
 import django_filters
-from core.models import User
+from core.models import User, Job
 
 
 class UserFilter(django_filters.FilterSet):
@@ -12,4 +12,14 @@ class UserFilter(django_filters.FilterSet):
             'email': ['icontains'],
             'username': ['icontains'],
             'user_type': ['exact'],
+        }
+
+
+class JobFilter(django_filters.FilterSet):
+    class Meta:
+        model = Job
+        fields = {
+            'job_title': ['icontains'],
+            'date_posted': ['icontains'],
+            'job_description': ['icontains']
         }
