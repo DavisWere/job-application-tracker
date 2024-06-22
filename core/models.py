@@ -27,10 +27,12 @@ class User(AbstractUser):
 class Jobs(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, null=True, blank=True)
-    type_of_job = models.CharField(max_length=500, null=True, blank=True)
+    job_title = models.CharField(max_length=100, null=True, blank=True)
+    job_description = models.TextField(max_length=500, null=True, blank=True)
+    date_posted = models.DateField(auto_now=True, null=True)
 
     def __str__(self):
-        return f"{self.type_of_job}"
+        return f"{self.job_title}"
 
 
 class Currency(models.TextChoices):
@@ -57,9 +59,18 @@ class Payment(models.Model):
         choices=Currency.choices,
         default=Currency.SH
     )
+    amount = models.FloatField(null=True)
 
     def __str__(self):
         return f"Payment ID: {self.id} - User: {self.user} - Method: {self.payment_method} - Currency: {self.currency}"
+
+
+class Application(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    job = models.ForeignKey(Jobs, on_delete=models.CASCADE, null=True)
+    payment = models.ForeignKey(Payment, on_delete=models.PROTECT, null=True)
+    applied = models.BooleanField(default=False, editable=False)
+    application_date = models.DateField(auto_created=True)
 
 
 class Notification(models.Model):

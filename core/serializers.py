@@ -30,3 +30,11 @@ class UserSerializer(serializers.ModelSerializer):
         user_type = self.context['request'].data.get('user_type', None)
         if user_type == 'applicant':
             self.fields['resume'] = serializers.FileField()
+
+    def validate(self, data):
+        user = data.get('user_type')
+        if user.user_type != 'applicant':
+            raise serializers.ValidationError(
+                'only applicants can apply for job')
+
+        return data
