@@ -5,7 +5,7 @@ from django.views import View
 from rest_framework_simplejwt.views import TokenObtainPairView
 from core.serializers import *
 from core.models import *
-from core.filters import UserFilter, JobFilter
+from core.filters import *
 
 
 class CustomObtainTokenPairView(TokenObtainPairView):
@@ -35,3 +35,17 @@ class JobViewSet(viewsets.ModelViewSet):
     # permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend]
     filterset_class = JobFilter
+
+
+class PaymentViewSet(viewsets.ModelViewSet):
+    queryset = Payment.objects.all()
+    serializer_class = PaymentSertializer
+    # permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = PaymentFilter
+
+
+class ApplicationViewSet(viewsets.ModelViewSet):
+    queryset = Application.objects.all()
+    serializer_class = ApplicationSerializer
+    # permission_classes = [permissions.IsAuthenticated]

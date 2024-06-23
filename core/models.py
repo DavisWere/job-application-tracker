@@ -32,7 +32,7 @@ class Job(models.Model):
         auto_now_add=True,  editable=False, null=True)
 
     def __str__(self):
-        return f"{self.Job_title}"
+        return f"{self.job_title}"
 
 
 class Currency(models.TextChoices):
@@ -67,10 +67,13 @@ class Payment(models.Model):
 
 class Application(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    Job = models.ForeignKey(Job, on_delete=models.CASCADE, null=True)
+    job = models.ForeignKey(Job, on_delete=models.CASCADE, null=True)
     payment = models.ForeignKey(Payment, on_delete=models.PROTECT, null=True)
     applied = models.BooleanField(default=False, editable=False)
     application_date = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return f"job applied for: {self.job} -Applied: {self.applied} - Application date: {self.application_date}"
 
 
 class Notification(models.Model):

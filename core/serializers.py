@@ -61,3 +61,65 @@ class JobSerializer(serializers.ModelSerializer):
             instance.user = user
         instance.save()
         return instance
+
+
+class PaymentSertializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(
+        write_only=True, queryset=User.objects.all(), required=False)
+
+    class Meta:
+        model = Payment
+        fields = ['id', 'user', 'payment_method', 'currency', 'amount']
+
+    def create(self, validated_data):
+        user = validated_data.pop('user', None)
+        payment = Payment.objects.create(user=user, **validated_data)
+        payment.save()
+        return payment
+
+
+class ApplicationSerializer(serializers.ModelSerializer):
+    job = serializers.PrimaryKeyRelatedField(
+        write_only=True, queryset=Job.objects.all(), required=False)
+    user = serializers.PrimaryKeyRelatedField(
+        write_only=True, queryset=User.objects.all(), required=False)
+    payment = serializers.PrimaryKeyRelatedField(
+        write_only=True, queryset=Payment.objects.all(), required=False)
+
+    class Meta:
+        model = Application
+        fields = ['id', 'user', 'job', 'payment',
+                  'applied', 'application_date']
+
+    def create(self, validated_data):
+        job = validated_data.pop('job', None)
+        user = validated_data.pop('user', None)
+        payment = validated_data.pop('payment', None)
+        applied = validated_data.get('applied', None)
+        if job and user and payment is not None:
+            if payment.amount == 1000:
+                applied = True
+            else:
+                applied = False
+        application = Application.objects.create(
+            job=job, user=user, payment=payment, applied=applied, **validated_data)
+        application.save()
+        return application
+
+    def update(self, instance, validated_data):
+        job = validated_data.pop('job', None)
+        user = validated_data.pop('user', None)
+        payment = validated_data.pop('payment', None)
+        applied = validated_data.get('applied', None)
+        application = super().update(instance, validated_data)
+        application.save()
+        if job is not None:
+            instance.job = job
+        if user is not None:
+            instance.user = user
+        if payment is not None:
+            instance.payment = payment
+        if applied is not None:
+            instance.applied = applied
+        instance.save()
+        return instance
